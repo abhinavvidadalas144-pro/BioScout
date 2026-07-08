@@ -5,7 +5,8 @@ import MapScreen from "./components/MapScreen";
 import HqDashboard from "./components/HqDashboard";
 import FieldGuideScreen from "./components/FieldGuideScreen";
 import ReportSightingModal from "./components/ReportSightingModal";
-import AuthModal from "./components/AuthModal";
+import LoginPage from "./components/LoginPage";
+import RegisterPage from "./components/RegisterPage";
 import GlobalSearchBar from "./components/GlobalSearchBar";
 import { IMAGES } from "./assets";
 import { motion, AnimatePresence } from "motion/react";
@@ -16,8 +17,6 @@ export default function App() {
   const [focusedSightingId, setFocusedSightingId] = useState<string | undefined>(undefined);
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
-  const [authModalTab, setAuthModalTab] = useState<"login" | "register">("login");
   const [mapFullscreen, setMapFullscreen] = useState<boolean>(false);
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   
@@ -203,6 +202,33 @@ export default function App() {
     }
   }, []);
 
+  // Listen to browser pathname changes for clean URL SPA routing
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const path = window.location.pathname;
+      if (path === "/login") {
+        setActiveScreen(ActiveScreen.LOGIN);
+      } else if (path === "/register") {
+        setActiveScreen(ActiveScreen.REGISTER);
+      } else if (path === "/map") {
+        setActiveScreen(ActiveScreen.MAP);
+      } else if (path === "/hq") {
+        setActiveScreen(ActiveScreen.HQ);
+      } else if (path === "/guide") {
+        setActiveScreen(ActiveScreen.GUIDE);
+      } else {
+        setActiveScreen(ActiveScreen.LANDING);
+      }
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+    handleLocationChange(); // Run initial check on mount
+
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, []);
+
   const handleAuthSuccess = (user: UserProfile) => {
     setCurrentUser(user);
     localStorage.setItem("bioscout_current_user", JSON.stringify(user));
@@ -376,6 +402,19 @@ export default function App() {
     if (screen !== ActiveScreen.MAP) {
       setFocusedSightingId(undefined);
     }
+
+    // Synchronize browser URL pathname
+    let path = "/";
+    if (screen === ActiveScreen.MAP) path = "/map";
+    else if (screen === ActiveScreen.HQ) path = "/hq";
+    else if (screen === ActiveScreen.GUIDE) path = "/guide";
+    else if (screen === ActiveScreen.LOGIN) path = "/login";
+    else if (screen === ActiveScreen.REGISTER) path = "/register";
+
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, "", path);
+    }
+
     // Scroll to top on navigation to ensure a premium responsive transition
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -573,7 +612,7 @@ export default function App() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => { setAuthModalTab("login"); setIsAuthModalOpen(true); }}
+                      onClick={() => navigateToScreen(ActiveScreen.LOGIN)}
                       className="text-xs font-bold text-[#404944] hover:text-[#003527] transition-all cursor-pointer"
                     >
                       Sign In
@@ -582,7 +621,7 @@ export default function App() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => { setAuthModalTab("register"); setIsAuthModalOpen(true); }}
+                      onClick={() => navigateToScreen(ActiveScreen.REGISTER)}
                       className="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-all cursor-pointer"
                     >
                       Join
@@ -610,7 +649,7 @@ export default function App() {
               onReportSighting={() => setIsReportModalOpen(true)}
               currentUser={currentUser}
               onLogout={handleLogout}
-              onOpenAuth={(tab) => { setAuthModalTab(tab); setIsAuthModalOpen(true); }}
+              onOpenAuth={(tab) => navigateToScreen(tab === "login" ? ActiveScreen.LOGIN : ActiveScreen.REGISTER)}
               onSelectSpecies={handleSelectSpeciesFromMap}
               theme={theme}
               onToggleTheme={handleToggleTheme}
@@ -661,7 +700,7 @@ export default function App() {
               streakCount={streakCount}
               totalPoints={totalPoints}
               currentUser={currentUser}
-              onOpenAuth={(tab) => { setAuthModalTab(tab); setIsAuthModalOpen(true); }}
+              onOpenAuth={(tab) => navigateToScreen(tab === "login" ? ActiveScreen.LOGIN : ActiveScreen.REGISTER)}
               onUpdateUser={handleUpdateUser}
               sightings={sightings}
               customGuides={customGuides}
@@ -688,6 +727,38 @@ export default function App() {
             />
           </motion.div>
         )}
+
+        {activeScreen === ActiveScreen.LOGIN && (
+          <motion.div
+            key="login"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <LoginPage
+              onNavigate={navigateToScreen}
+              onAuthSuccess={handleAuthSuccess}
+              theme={theme}
+            />
+          </motion.div>
+        )}
+
+        {activeScreen === ActiveScreen.REGISTER && (
+          <motion.div
+            key="register"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <RegisterPage
+              onNavigate={navigateToScreen}
+              onAuthSuccess={handleAuthSuccess}
+              theme={theme}
+            />
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Sighting Multi-Step Overlay Modal */}
@@ -696,17 +767,6 @@ export default function App() {
           <ReportSightingModal
             onClose={() => setIsReportModalOpen(false)}
             onSightingConfirmed={handleSightingConfirmed}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Authentication Modal */}
-      <AnimatePresence>
-        {isAuthModalOpen && (
-          <AuthModal
-            initialTab={authModalTab}
-            onClose={() => setIsAuthModalOpen(false)}
-            onAuthSuccess={handleAuthSuccess}
           />
         )}
       </AnimatePresence>

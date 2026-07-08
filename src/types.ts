@@ -12,7 +12,9 @@ export enum ActiveScreen {
   LANDING = "landing",
   MAP = "map",
   HQ = "hq",
-  GUIDE = "guide"
+  GUIDE = "guide",
+  LOGIN = "login",
+  REGISTER = "register"
 }
 
 export interface SimilarSpecies {

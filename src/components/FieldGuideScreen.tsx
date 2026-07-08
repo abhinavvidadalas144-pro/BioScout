@@ -71,7 +71,10 @@ export const getSpeciesImage = (speciesName: string, customImage?: string): stri
     return customImage;
   }
   const name = (speciesName || "").trim().toLowerCase();
+  
+  // Explicit high-quality authentic species mappings
   switch (name) {
+    // Primary Species
     case "blue morpho":
       return IMAGES.blueMorphoMain;
     case "snow leopard":
@@ -102,17 +105,111 @@ export const getSpeciesImage = (speciesName: string, customImage?: string): stri
       return "https://upload.wikimedia.org/wikipedia/commons/e/e8/Nepenthes_alata_pitcher_plant.jpg";
     case "heliconia flower":
       return "https://upload.wikimedia.org/wikipedia/commons/e/ec/Heliconia_rostrata.jpg";
+
+    // Similar / Secondary Species Map
     case "common morpho":
+    case "common morpho achilles":
       return IMAGES.commonMorpho || "https://images.unsplash.com/photo-1560114928-40f1f1eb26a0?auto=format&fit=crop&w=800&q=85";
     case "helenor morpho":
+    case "helenor morpho rainforest":
       return IMAGES.helenorMorpho || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=85";
     case "blue emperor":
       return IMAGES.blueEmperor || "https://images.unsplash.com/photo-1545155998-0c679a9f4fbd?auto=format&fit=crop&w=800&q=85";
     case "monarch butterfly":
       return IMAGES.monarchButterfly || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=85";
-    default:
-      return `https://picsum.photos/seed/${encodeURIComponent(speciesName)}/800/600`;
+    case "red-and-green macaw":
+      return "https://upload.wikimedia.org/wikipedia/commons/a/a3/Ara_chloropterus_at_Jardin_des_Plantes.jpg";
+    case "military macaw":
+      return "https://upload.wikimedia.org/wikipedia/commons/a/a2/Military_macaw_closeup_Ara_militaris.jpg";
+    case "golden poison frog":
+    case "golden poison dart frog":
+      return "https://upload.wikimedia.org/wikipedia/commons/3/3b/Golden_Poison_Dart_Frog_%28Phyllobates_terribilis%29.jpg";
+    case "splash-back poison frog":
+      return "https://upload.wikimedia.org/wikipedia/commons/a/ac/Ranitomeya_variabilis_French_Guiana.jpg";
+    case "leopard":
+      return "https://upload.wikimedia.org/wikipedia/commons/e/e7/Panthera_pardus_leopard.jpg";
+    case "cougar":
+    case "mountain lion":
+      return "https://upload.wikimedia.org/wikipedia/commons/d/d6/Mountain_Lion_in_heavy_snow.jpg";
+    case "tucuxi":
+      return "https://upload.wikimedia.org/wikipedia/commons/6/6f/Sotalia_fluviatilis2.jpg";
+    case "bolivian river dolphin":
+      return "https://upload.wikimedia.org/wikipedia/commons/c/ca/Inia_geoffrensis_boliviensis_in_Bolivia.jpg";
+    case "two-toed sloth":
+      return "https://upload.wikimedia.org/wikipedia/commons/b/b4/Choloepus_hoffmanni_Costa_Rica.jpg";
+    case "neotropical otter":
+      return "https://upload.wikimedia.org/wikipedia/commons/5/52/Lontra_longicaudis.jpg";
+    case "crested eagle":
+      return "https://upload.wikimedia.org/wikipedia/commons/e/e6/Morphnus_guianensis_Crested_Eagle_Gavi%C3%A3o-real-falso.jpg";
+    case "steller's sea eagle":
+      return "https://upload.wikimedia.org/wikipedia/commons/5/5a/Steller%27s_Sea_Eagle_closeup.jpg";
+    case "capuchin monkey":
+      return "https://upload.wikimedia.org/wikipedia/commons/4/40/White-headed_capuchin_monkey_%28Cebus_capucinus%29_profile.jpg";
+    case "spider monkey":
+      return "https://upload.wikimedia.org/wikipedia/commons/4/4c/Geoffroy%27s_Spider_Monkey_%28Ateles_geoffroyi%29_in_Corcovado.jpg";
+    case "brazil nut tree":
+      return "https://upload.wikimedia.org/wikipedia/commons/3/33/Bertholletia_excelsa_opening.jpg";
+    case "tropical pitcher plant":
+      return "https://upload.wikimedia.org/wikipedia/commons/4/4c/Nepenthes_ampullaria_pitchers.jpg";
+    case "wild plantain":
+      return "https://upload.wikimedia.org/wikipedia/commons/b/bf/Heliconia_caribaea_blooms.jpg";
+    case "soft tree fern":
+      return "https://upload.wikimedia.org/wikipedia/commons/b/b3/Dicksonia_antarctica_fronds.jpg";
+    case "black tree fern":
+      return "https://upload.wikimedia.org/wikipedia/commons/b/ba/Cyathea_medullaris_New_Zealand.jpg";
+    case "tiger orchid":
+      return "https://upload.wikimedia.org/wikipedia/commons/c/cf/Rossioglossum_grande_orchid.jpg";
+    case "clouded leopard":
+      return "https://upload.wikimedia.org/wikipedia/commons/a/ab/Clouded_Leopard_Neofelis_nebulosa_profile.jpg";
   }
+
+  // Broad keyword-based matcher fallbacks to maintain premium authentic photos
+  if (name.includes("butterfly") || name.includes("morpho") || name.includes("insect") || name.includes("caterpillar") || name.includes("moth")) {
+    return IMAGES.blueMorphoMain;
+  }
+  if (name.includes("macaw") || name.includes("parrot") || name.includes("toucan") || name.includes("bird") || name.includes("hummingbird") || name.includes("owl") || name.includes("falcon")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/c/c4/Ara_macao_-Copan_Ruins%2C_Honduras_-wild-8.jpg";
+  }
+  if (name.includes("eagle")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/2/22/Harpy_Eagle_Harpia_harpyja_2000px.jpg";
+  }
+  if (name.includes("leopard") || name.includes("jaguar") || name.includes("cat") || name.includes("puma") || name.includes("cougar") || name.includes("panther") || name.includes("tiger") || name.includes("lion")) {
+    if (name.includes("snow")) return IMAGES.snowLeopard;
+    return "https://upload.wikimedia.org/wikipedia/commons/0/0a/Standing_jaguar.jpg";
+  }
+  if (name.includes("frog") || name.includes("toad") || name.includes("amphibian") || name.includes("dart") || name.includes("salamander")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/d/da/Strawberry_poison-dart_frog_%28Oophaga_pumilio%29.jpg";
+  }
+  if (name.includes("dolphin") || name.includes("whale") || name.includes("boto") || name.includes("tucuxi") || name.includes("porpoise") || name.includes("aquatic")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/e/e0/Boto_Inia_geoffrensis_3.jpg";
+  }
+  if (name.includes("sloth") || name.includes("bradypus") || name.includes("choloepus")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/1/1a/Bradypus_variegatus_-_Manuel_Antonio.jpg";
+  }
+  if (name.includes("otter") || name.includes("pteronura") || name.includes("lontra")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/2/2f/Giant_Otter_%28Pteronura_brasiliensis%29_%288015949673%29.jpg";
+  }
+  if (name.includes("monkey") || name.includes("primate") || name.includes("capuchin") || name.includes("spider") || name.includes("ape") || name.includes("chimpanzee") || name.includes("tamarin")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/2/20/Saimiri_sciureus-top.jpg";
+  }
+  if (name.includes("fern")) {
+    return IMAGES.giantTreeFern;
+  }
+  if (name.includes("orchid")) {
+    return IMAGES.cloudForestOrchid;
+  }
+  if (name.includes("kapok") || name.includes("tree") || name.includes("forest") || name.includes("jungle") || name.includes("canopy") || name.includes("wood")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
+  }
+  if (name.includes("pitcher") || name.includes("nepenthes")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/e/e8/Nepenthes_alata_pitcher_plant.jpg";
+  }
+  if (name.includes("heliconia") || name.includes("flower") || name.includes("flora") || name.includes("plant") || name.includes("bromeliad") || name.includes("vine")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/e/ec/Heliconia_rostrata.jpg";
+  }
+
+  // Final premium neutral botanical-scientific card illustration placeholder (No Picsum)
+  return IMAGES.giantTreeFern;
 };
 
 const PRELOADED_SPECIES: Record<string, SpeciesData> = {
@@ -577,7 +674,7 @@ export function SpecimenCard3D({ species, isActive, onClick }: SpecimenCard3DPro
             referrerPolicy="no-referrer"
             onError={(e) => {
               const target = e.currentTarget;
-              const fallback = `https://picsum.photos/seed/${encodeURIComponent(species.speciesName)}/800/600`;
+              const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
               if (target.src !== fallback) {
                 target.src = fallback;
               }
@@ -1243,7 +1340,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                           referrerPolicy="no-referrer"
                           onError={(e) => {
                             const target = e.currentTarget;
-                            const fallback = `https://picsum.photos/seed/${encodeURIComponent(s.speciesName)}/800/600`;
+                            const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
                             if (target.src !== fallback) {
                               target.src = fallback;
                             }
@@ -1349,7 +1446,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                           referrerPolicy="no-referrer"
                           onError={(e) => {
                             const target = e.currentTarget;
-                            const fallback = `https://picsum.photos/seed/${encodeURIComponent(s.speciesName)}/800/600`;
+                            const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
                             if (target.src !== fallback) {
                               target.src = fallback;
                             }
@@ -1458,7 +1555,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   const target = e.currentTarget;
-                  const fallback = `https://picsum.photos/seed/${encodeURIComponent(currentProfile.speciesName)}/800/600`;
+                  const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
                   if (target.src !== fallback) {
                     target.src = fallback;
                   }
@@ -1713,7 +1810,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       const target = e.currentTarget;
-                      const fallback = `https://picsum.photos/seed/${encodeURIComponent(gallerySlides[activeSlide].title)}/800/600`;
+                      const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
                       if (target.src !== fallback) {
                         target.src = fallback;
                       }
