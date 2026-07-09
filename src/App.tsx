@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { ActiveScreen, Sighting, SpeciesData, UserProfile } from "./types";
 import GlobalSearchBar from "./components/GlobalSearchBar";
-import { IMAGES } from "./assets";
+import { IMAGES, getProxiedImageUrl } from "./assets";
 import { motion, AnimatePresence } from "motion/react";
 
 import LandingScreen from "./components/LandingScreen";
@@ -124,33 +124,45 @@ export default function App() {
     const sanitizeImageUrl = (speciesName: string, currentUrl: string): string => {
       if (!currentUrl) return currentUrl;
       const lower = speciesName.trim().toLowerCase();
+      let resolvedUrl = currentUrl;
       if (currentUrl.includes("unsplash.com") || currentUrl.includes("picsum.photos")) {
         switch (lower) {
           case "scarlet macaw":
-            return "https://upload.wikimedia.org/wikipedia/commons/c/c4/Ara_macao_-Copan_Ruins%2C_Honduras_-wild-8.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/c/c4/Ara_macao_-Copan_Ruins%2C_Honduras_-wild-8.jpg";
+            break;
           case "poison dart frog":
-            return "https://upload.wikimedia.org/wikipedia/commons/d/da/Strawberry_poison-dart_frog_%28Oophaga_pumilio%29.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/d/da/Strawberry_poison-dart_frog_%28Oophaga_pumilio%29.jpg";
+            break;
           case "jaguar":
-            return "https://upload.wikimedia.org/wikipedia/commons/0/0a/Standing_jaguar.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/0/0a/Standing_jaguar.jpg";
+            break;
           case "pink river dolphin":
-            return "https://upload.wikimedia.org/wikipedia/commons/e/e0/Boto_Inia_geoffrensis_3.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/e/e0/Boto_Inia_geoffrensis_3.jpg";
+            break;
           case "three-toed sloth":
-            return "https://upload.wikimedia.org/wikipedia/commons/1/1a/Bradypus_variegatus_-_Manuel_Antonio.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/1/1a/Bradypus_variegatus_-_Manuel_Antonio.jpg";
+            break;
           case "amazon giant otter":
-            return "https://upload.wikimedia.org/wikipedia/commons/2/2f/Giant_Otter_%28Pteronura_brasiliensis%29_%288015949673%29.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/2/2f/Giant_Otter_%28Pteronura_brasiliensis%29_%288015949673%29.jpg";
+            break;
           case "harpy eagle":
-            return "https://upload.wikimedia.org/wikipedia/commons/2/22/Harpy_Eagle_Harpia_harpyja_2000px.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/2/22/Harpy_Eagle_Harpia_harpyja_2000px.jpg";
+            break;
           case "squirrel monkey":
-            return "https://upload.wikimedia.org/wikipedia/commons/2/20/Saimiri_sciureus-top.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/2/20/Saimiri_sciureus-top.jpg";
+            break;
           case "kapok tree":
-            return "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
+            break;
           case "pitcher plant":
-            return "https://upload.wikimedia.org/wikipedia/commons/e/e8/Nepenthes_alata_pitcher_plant.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Nepenthes_alata_pitcher_plant.jpg";
+            break;
           case "heliconia flower":
-            return "https://upload.wikimedia.org/wikipedia/commons/e/ec/Heliconia_rostrata.jpg";
+            resolvedUrl = "https://upload.wikimedia.org/wikipedia/commons/e/ec/Heliconia_rostrata.jpg";
+            break;
         }
       }
-      return currentUrl;
+      return getProxiedImageUrl(resolvedUrl);
     };
 
     if (cachedSightings) {

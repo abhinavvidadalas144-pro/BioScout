@@ -1,7 +1,7 @@
 import React, { useState, useRef, lazy, Suspense, useEffect } from "react";
 import { ActiveScreen, UserProfile, Sighting, SpeciesData } from "../types";
 import ShaderCanvas from "./ShaderCanvas";
-import { IMAGES } from "../assets";
+import { IMAGES, getProxiedImageUrl } from "../assets";
 import { Menu, X, Compass, BookOpen, Map, Trophy, LogOut, User, Sliders } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import GlobalSearchBar from "./GlobalSearchBar";
@@ -193,7 +193,7 @@ export default function LandingScreen({
                   </div>
                   <div className="relative h-44 rounded-2xl overflow-hidden border border-slate-100 dark:border-emerald-950/30">
                     <img 
-                      src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Ara_macao_-Copan_Ruins%2C_Honduras_-wild-8.jpg" 
+                      src={getProxiedImageUrl("https://upload.wikimedia.org/wikipedia/commons/c/c4/Ara_macao_-Copan_Ruins%2C_Honduras_-wild-8.jpg")} 
                       className="w-full h-full object-cover brightness-95" 
                       alt="Sample Scarlet Macaw Sighting"
                       referrerPolicy="no-referrer"

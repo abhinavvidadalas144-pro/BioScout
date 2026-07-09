@@ -63,3 +63,11 @@ export const IMAGES = {
 
   godartsMorphoSilvery: "https://lh3.googleusercontent.com/aida-public/AB6AXuCpAHZz3ZuvULyeVVg9Ll3wJeF1AED8fFYX9zXGX9Z5vCv1Fo0GfScOpPPP2LEHKTOy76Va11IlqH8z5Ka2ByleWvnnXY6oLf4wd2dk6Z3MKTBpNCocgEBak-eGqq6AyXHH0kM63zWh8anrW8z9Mc9DraLKOjh59CNbGS078tUaVEmBDGVkxeYjsCvY34_unPrOM8YHSzqlUMI_aZBYbH_ENgSG4Rlbn65-S1GsVnugBwwJFZgwPKyf3Q8wMyfNxslMoHQgL2GYZsQ0=w480-rw",
 };
+
+export function getProxiedImageUrl(url: string): string {
+  if (url && (url.includes("wikimedia.org") || url.includes("upload.wikimedia.org"))) {
+    return `/api/image-proxy?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+

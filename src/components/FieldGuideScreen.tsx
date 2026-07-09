@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ActiveScreen, SpeciesData } from "../types";
-import { IMAGES } from "../assets";
+import { IMAGES, getProxiedImageUrl } from "../assets";
 import { motion, AnimatePresence } from "motion/react";
 import {
   LineChart,
@@ -67,10 +67,11 @@ export const getSpeciesCategory = (g: SpeciesData): string => {
 };
 
 export const getSpeciesImage = (speciesName: string, customImage?: string): string => {
-  if (customImage && customImage.trim() !== "") {
-    return customImage;
-  }
-  const name = (speciesName || "").trim().toLowerCase();
+  const getRawImage = (): string => {
+    if (customImage && customImage.trim() !== "") {
+      return customImage;
+    }
+    const name = (speciesName || "").trim().toLowerCase();
   
   // Explicit high-quality authentic species mappings
   switch (name) {
@@ -210,6 +211,9 @@ export const getSpeciesImage = (speciesName: string, customImage?: string): stri
 
   // Final premium neutral botanical-scientific card illustration placeholder (No Picsum)
   return IMAGES.giantTreeFern;
+  };
+
+  return getProxiedImageUrl(getRawImage());
 };
 
 const PRELOADED_SPECIES: Record<string, SpeciesData> = {
@@ -684,7 +688,7 @@ export function SpecimenCard3D({ species, isActive, onClick }: SpecimenCard3DPro
             referrerPolicy="no-referrer"
             onError={(e) => {
               const target = e.currentTarget;
-              const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
+              const fallback = getProxiedImageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg");
               if (target.src !== fallback) {
                 target.src = fallback;
               }
@@ -1388,7 +1392,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                           referrerPolicy="no-referrer"
                           onError={(e) => {
                             const target = e.currentTarget;
-                            const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
+                            const fallback = getProxiedImageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg");
                             if (target.src !== fallback) {
                               target.src = fallback;
                             }
@@ -1494,7 +1498,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                           referrerPolicy="no-referrer"
                           onError={(e) => {
                             const target = e.currentTarget;
-                            const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
+                            const fallback = getProxiedImageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg");
                             if (target.src !== fallback) {
                               target.src = fallback;
                             }
@@ -1603,7 +1607,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   const target = e.currentTarget;
-                  const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
+                  const fallback = getProxiedImageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg");
                   if (target.src !== fallback) {
                     target.src = fallback;
                   }
@@ -1858,7 +1862,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       const target = e.currentTarget;
-                      const fallback = "https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg";
+                      const fallback = getProxiedImageUrl("https://upload.wikimedia.org/wikipedia/commons/0/05/Ceiba_pentandra.jpg");
                       if (target.src !== fallback) {
                         target.src = fallback;
                       }

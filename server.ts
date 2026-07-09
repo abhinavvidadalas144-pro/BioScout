@@ -50,6 +50,46 @@ async function startServer() {
     res.json({ status: "ok", time: new Date().toISOString() });
   });
 
+  // Image proxy to bypass third-party cookie restrictions and provide long-lived caching
+  app.get("/api/image-proxy", async (req, res) => {
+    try {
+      const imageUrl = req.query.url as string;
+      if (!imageUrl) {
+        return res.status(400).json({ error: "Missing url parameter" });
+      }
+
+      // Security check: Only allow images from trusted domains
+      const allowedHosts = ["wikimedia.org", "upload.wikimedia.org"];
+      const urlObj = new URL(imageUrl);
+      if (!allowedHosts.some(host => urlObj.hostname.endsWith(host))) {
+        return res.status(403).json({ error: "Forbidden image host" });
+      }
+
+      // Fetch the image
+      const response = await fetch(imageUrl, {
+        headers: {
+          "User-Agent": "BioScout-Conservation-Bot/1.0"
+        }
+      });
+
+      if (!response.ok) {
+        return res.status(response.status).json({ error: "Failed to fetch image" });
+      }
+
+      const contentType = response.headers.get("content-type") || "image/jpeg";
+      res.setHeader("Content-Type", contentType);
+      // Enforce efficient cache lifetimes (1 year)
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      return res.send(buffer);
+    } catch (error: any) {
+      console.error("[BioScout Image Proxy] Error:", error);
+      return res.status(500).json({ error: "Internal server error during image proxying" });
+    }
+  });
+
   // Species identification endpoint
   app.post("/api/identify-species", async (req, res) => {
     try {
