@@ -700,7 +700,7 @@ export function SpecimenCard3D({ species, isActive, onClick }: SpecimenCard3DPro
 
         {/* Info */}
         <div className="flex-1 flex flex-col justify-end z-10 pointer-events-none" style={{ transform: "translateZ(15px)" }}>
-          <h4 className={`text-xs font-black tracking-tight leading-tight line-clamp-1 ${isActive ? "text-white" : "text-[#003527]"}`}>{species.speciesName}</h4>
+          <div className={`text-xs font-black tracking-tight leading-tight line-clamp-1 ${isActive ? "text-white" : "text-[#003527]"}`}>{species.speciesName}</div>
           <p className="text-[8px] font-bold text-emerald-600 italic font-mono truncate">{species.scientificName}</p>
           
           <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100/30 text-[8px] font-mono text-[#8d928f]">
@@ -1444,7 +1444,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
 
                       {/* Detail Section */}
                       <div className="space-y-2 text-xs text-[#404944] leading-relaxed">
-                        <h4 className="font-extrabold text-[#003527] uppercase tracking-wider text-[10px] font-mono">Taxonomical Profile</h4>
+                        <div className="font-extrabold text-[#003527] uppercase tracking-wider text-[10px] font-mono">Taxonomical Profile</div>
                         <div className="p-3.5 bg-[#f4f4f3]/40 border border-slate-100 rounded-xl space-y-1">
                           <div className="flex justify-between"><span className="font-mono text-[9px] text-slate-400">Kingdom</span><span className="font-bold text-[#003527]">{s.kingdom}</span></div>
                           <div className="flex justify-between"><span className="font-mono text-[9px] text-slate-400">Order</span><span className="font-bold text-[#003527]">{s.order}</span></div>
@@ -1456,7 +1456,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
 
                       {/* Fun Facts */}
                       <div className="space-y-2 text-xs">
-                        <h4 className="font-extrabold text-[#003527] uppercase tracking-wider text-[10px] font-mono">Primary Trivia</h4>
+                        <div className="font-extrabold text-[#003527] uppercase tracking-wider text-[10px] font-mono">Primary Trivia</div>
                         <ul className="list-disc pl-4 space-y-1 text-slate-600 font-medium leading-relaxed">
                           {s.funFacts.slice(0, 2).map((f, i) => <li key={i}>{f}</li>)}
                         </ul>
@@ -1550,7 +1550,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
 
                       {/* Detail Section */}
                       <div className="space-y-2 text-xs text-[#404944] leading-relaxed">
-                        <h4 className="font-extrabold text-[#003527] uppercase tracking-wider text-[10px] font-mono">Taxonomical Profile</h4>
+                        <div className="font-extrabold text-[#003527] uppercase tracking-wider text-[10px] font-mono">Taxonomical Profile</div>
                         <div className="p-3.5 bg-[#f4f4f3]/40 border border-[#bfc9c3]/10 rounded-xl space-y-1">
                           <div className="flex justify-between"><span className="font-mono text-[9px] text-slate-400">Kingdom</span><span className="font-bold text-[#003527]">{s.kingdom}</span></div>
                           <div className="flex justify-between"><span className="font-mono text-[9px] text-slate-400">Order</span><span className="font-bold text-[#003527]">{s.order}</span></div>
@@ -1562,7 +1562,7 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
 
                       {/* Fun Facts */}
                       <div className="space-y-2 text-xs">
-                        <h4 className="font-extrabold text-[#003527] uppercase tracking-wider text-[10px] font-mono font-sans">Primary Trivia</h4>
+                        <div className="font-extrabold text-[#003527] uppercase tracking-wider text-[10px] font-mono font-sans">Primary Trivia</div>
                         <ul className="list-disc pl-4 space-y-1 text-slate-600 font-medium leading-relaxed">
                           {s.funFacts.slice(0, 2).map((f, i) => <li key={i}>{f}</li>)}
                         </ul>

@@ -501,7 +501,7 @@ export default function EcosystemSandbox({ theme }: EcosystemSandboxProps) {
                     className="text-center space-y-2"
                   >
                     <span className="text-3xl animate-pulse">🧬</span>
-                    <h4 className="text-emerald-400 font-mono text-sm font-bold tracking-widest animate-pulse">RECONSTRUCTING BIOME...</h4>
+                    <div className="text-emerald-400 font-mono text-sm font-bold tracking-widest animate-pulse">RECONSTRUCTING BIOME...</div>
                   </motion.div>
                 </motion.div>
               ) : (
@@ -582,10 +582,10 @@ export default function EcosystemSandbox({ theme }: EcosystemSandboxProps) {
                 ? "bg-[#001f15]/80 border-emerald-900/40 text-[#6ffbbe]" 
                 : "bg-white border-[#bfc9c3]/30 text-[#003527]"
             }`}>
-              <h4 className="text-xs font-black uppercase tracking-wider mb-2 text-emerald-500 flex items-center gap-1.5">
+              <div className="text-xs font-black uppercase tracking-wider mb-2 text-emerald-500 flex items-center gap-1.5">
                 <Activity className="w-4 h-4" />
                 Real-Time Viability Rank
-              </h4>
+              </div>
               <p className="text-[11px] opacity-75 mb-3 leading-relaxed">
                 As physical attributes warp, watch how biological systems adjust in suitability rating:
               </p>
@@ -724,7 +724,7 @@ export default function EcosystemSandbox({ theme }: EcosystemSandboxProps) {
             >
               <span className="text-xl shrink-0 mt-0.5">{log.icon}</span>
               <div className="space-y-1">
-                <h4 className="text-xs font-black tracking-tight">{log.title}</h4>
+                <div className="text-xs font-black tracking-tight">{log.title}</div>
                 <p className="text-[10px] leading-relaxed opacity-85">{log.message}</p>
               </div>
             </div>

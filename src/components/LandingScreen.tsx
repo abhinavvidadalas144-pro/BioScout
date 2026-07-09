@@ -232,7 +232,7 @@ export default function LandingScreen({
                       🔒
                     </div>
                     <div>
-                      <h4 className="text-xs font-black text-slate-700 dark:text-emerald-300">Gamified Rank & Milestones</h4>
+                      <div className="text-xs font-black text-slate-700 dark:text-emerald-300">Gamified Rank & Milestones</div>
                       <p className="text-[10px] text-slate-400 dark:text-emerald-500/50">Gain ranks, badges and complete weekly naturalist tasks</p>
                     </div>
                   </div>
@@ -834,7 +834,7 @@ export default function LandingScreen({
                 </div>
               </div>
               <div className="p-6 [transform-style:preserve-3d]">
-                <h4 className="text-xl font-bold text-[#003527] mb-1" style={{ transform: "translateZ(20px)" }}>Blue Morpho</h4>
+                <h3 className="text-xl font-bold text-[#003527] mb-1" style={{ transform: "translateZ(20px)" }}>Blue Morpho</h3>
                 <p className="text-xs text-[#006c49] font-bold uppercase mb-4 tracking-wider" style={{ transform: "translateZ(15px)" }}>Morpho menelaus</p>
                 <div className="flex justify-between items-center text-[#404944] text-sm" style={{ transform: "translateZ(10px)" }}>
                   <span className="flex items-center gap-1">
@@ -875,7 +875,7 @@ export default function LandingScreen({
                 </div>
               </div>
               <div className="p-6 [transform-style:preserve-3d]">
-                <h4 className="text-xl font-bold text-[#003527] mb-1" style={{ transform: "translateZ(20px)" }}>Snow Leopard</h4>
+                <h3 className="text-xl font-bold text-[#003527] mb-1" style={{ transform: "translateZ(20px)" }}>Snow Leopard</h3>
                 <p className="text-xs text-[#006c49] font-bold uppercase mb-4 tracking-wider" style={{ transform: "translateZ(15px)" }}>Panthera uncia</p>
                 <div className="flex justify-between items-center text-[#404944] text-sm" style={{ transform: "translateZ(10px)" }}>
                   <span className="flex items-center gap-1">
@@ -916,7 +916,7 @@ export default function LandingScreen({
                 </div>
               </div>
               <div className="p-6 [transform-style:preserve-3d]">
-                <h4 className="text-xl font-bold text-[#003527] mb-1" style={{ transform: "translateZ(20px)" }}>Giant Tree Fern</h4>
+                <h3 className="text-xl font-bold text-[#003527] mb-1" style={{ transform: "translateZ(20px)" }}>Giant Tree Fern</h3>
                 <p className="text-xs text-[#006c49] font-bold uppercase mb-4 tracking-wider" style={{ transform: "translateZ(15px)" }}>Cyathea cooperi</p>
                 <div className="flex justify-between items-center text-[#404944] text-sm" style={{ transform: "translateZ(10px)" }}>
                   <span className="flex items-center gap-1">
