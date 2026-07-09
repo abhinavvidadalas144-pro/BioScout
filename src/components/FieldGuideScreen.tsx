@@ -862,6 +862,44 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
   const [newFact1, setNewFact1] = useState("");
   const [newFact2, setNewFact2] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          setNewImageUrl(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLocalFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          setNewImageUrl(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const presetImages = [
     { label: "Lush Jungle", url: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=800&q=80" },
@@ -2185,26 +2223,74 @@ export default function FieldGuideScreen({ onNavigate, selectedSpeciesName, onRe
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-[10px] font-extrabold uppercase tracking-wider text-[#404944] font-mono">Specimen Image URL</label>
-                  <input
-                    type="text"
-                    placeholder="Enter image URL or select a preset illustration below..."
-                    value={newImageUrl}
-                    onChange={(e) => setNewImageUrl(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#003527] font-semibold outline-none focus:ring-2 focus:ring-emerald-600"
-                  />
-                  <div className="flex flex-wrap gap-2 pt-1.5">
-                    {presetImages.map((img) => (
-                      <button
-                        key={img.label}
-                        type="button"
-                        onClick={() => setNewImageUrl(img.url)}
-                        className={`px-3 py-1.5 rounded-lg text-[9px] font-extrabold border transition-all cursor-pointer ${newImageUrl === img.url ? "bg-emerald-600 border-transparent text-white" : "bg-[#f4f4f3] border-slate-200 text-[#404944] hover:bg-slate-200"}`}
-                      >
-                        {img.label}
-                      </button>
-                    ))}
+                <div className="space-y-3">
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wider text-[#404944] font-mono">Specimen Image *</label>
+                  
+                  {/* Drag and Drop Box */}
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => document.getElementById("guide-file-upload")?.click()}
+                    className={`border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all min-h-[140px] relative ${
+                      isDragOver ? "border-emerald-500 bg-emerald-500/5" : "border-slate-200 hover:border-emerald-500/50 hover:bg-slate-50/55"
+                    }`}
+                  >
+                    <input
+                      type="file"
+                      id="guide-file-upload"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleLocalFileChange}
+                    />
+
+                    {newImageUrl ? (
+                      <div className="relative w-full h-32 rounded-xl overflow-hidden shadow-sm">
+                        <img src={newImageUrl} alt="Specimen Preview" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-[11px] font-bold gap-1.5 opacity-0 hover:opacity-100 transition-opacity">
+                          <span>🔄 Click or Drag to Replace</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center space-y-1.5">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 mx-auto">
+                          <span className="material-symbols-outlined text-[20px]">cloud_upload</span>
+                        </div>
+                        <div>
+                          <p className="font-extrabold text-slate-800 text-[11px]">Drag and drop file here, or click to browse</p>
+                          <p className="text-[9px] text-[#4d5e54] mt-0.5">JPG, PNG, or WebP files supported</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Or Manual URL Field */}
+                  <div className="space-y-1">
+                    <span className="block text-[9px] font-extrabold uppercase tracking-widest text-slate-400 font-mono text-center">— OR ENTER IMAGE URL —</span>
+                    <input
+                      type="text"
+                      placeholder="Enter a direct image URL..."
+                      value={newImageUrl.startsWith("data:") ? "" : newImageUrl}
+                      onChange={(e) => setNewImageUrl(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-[#003527] font-semibold outline-none focus:ring-2 focus:ring-emerald-600"
+                    />
+                  </div>
+
+                  {/* Presets */}
+                  <div className="space-y-1">
+                    <span className="block text-[9px] font-extrabold uppercase tracking-wider text-slate-400 font-mono">Select from premium stock presets:</span>
+                    <div className="flex flex-wrap gap-2">
+                      {presetImages.map((img) => (
+                        <button
+                          key={img.label}
+                          type="button"
+                          onClick={() => setNewImageUrl(img.url)}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-extrabold border transition-all cursor-pointer ${newImageUrl === img.url ? "bg-emerald-600 border-transparent text-white" : "bg-[#f4f4f3] border-slate-200 text-[#404944] hover:bg-slate-200"}`}
+                        >
+                          {img.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
