@@ -185,6 +185,69 @@ export default function EcosystemSandbox({ theme }: EcosystemSandboxProps) {
     return `rgba(${Math.min(255, red + 10)}, ${Math.min(255, green + 15)}, ${Math.min(255, blue + 30)}, 0.08)`;
   };
 
+  // Dynamic educational alert logs
+  const getEnvironmentalLogs = () => {
+    const logs = [];
+    if (humidity < 30) {
+      logs.push({
+        type: "warning",
+        title: "Critical Aridity Detected",
+        message: "Severe dry spell in progress. Desert species like the Desert Horned Lizard are at 100% biological comfort, while rainforest insects like the Blue Morpho are experiencing fatal dehydration risks.",
+        icon: "⚠️"
+      });
+    } else if (humidity > 80) {
+      logs.push({
+        type: "success",
+        title: "Hyper-Humid Precipitation",
+        message: "Rainforest humidity triggers peak activity. Blue Morpho butterflies are exhibiting active flight. However, high moisture may accelerate fungal pathogens on sensitive high-altitude flora.",
+        icon: "🌧️"
+      });
+    }
+
+    if (altitude > 75) {
+      logs.push({
+        type: "info",
+        title: "Hypoxia-Level Alpine Elevation",
+        message: "Oxygen density is reduced by 30%. High altitude specialist Panthera uncia (Snow Leopard) is in peak hunting posture. Lowland mammals find respiration difficult at this altitude.",
+        icon: "🏔️"
+      });
+    } else if (altitude < 15) {
+      logs.push({
+        type: "info",
+        title: "Lowland River Basin",
+        message: "Heavy soil deposition and peak atmospheric density. Supports high-density vegetation, but prone to localized flooding if humidity levels cross 85%.",
+        icon: "🌊"
+      });
+    }
+
+    if (canopy > 80) {
+      logs.push({
+        type: "success",
+        title: "Deep Jungle Canopy Occlusion",
+        message: "Understory receives less than 5% direct solar radiation. Excellent damp-nesting grounds for Giant Tree Ferns and cryptic hunting for the Bengal Tiger. Solar energy generation is minimized.",
+        icon: "🌳"
+      });
+    } else if (canopy < 20) {
+      logs.push({
+        type: "warning",
+        title: "Extreme Canopy Deficit",
+        message: "Ground level is subjected to full UV-radiation exposure. High soil evaporation rates detected. Desert Horned Lizards utilize this for thermoregulation, while forest floor mosses dry out.",
+        icon: "☀️"
+      });
+    }
+
+    if (logs.length === 0) {
+      logs.push({
+        type: "info",
+        title: "Stably Balanced Climate Corridor",
+        message: "Average atmospheric readings. Broad-leaved woodlands and generalist species can establish stable nesting patterns. Diversity indices are within standard parameters.",
+        icon: "⚖️"
+      });
+    }
+
+    return logs;
+  };
+
   return (
     <div className="w-full">
       <div className="text-center mb-16">
@@ -524,6 +587,60 @@ export default function EcosystemSandbox({ theme }: EcosystemSandboxProps) {
         </div>
 
       </div>
+
+      {/* Dynamic Environmental Bio-Telemetry & AI Advisory Feed */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className={`mt-10 p-6 md:p-8 rounded-[32px] border transition-all ${
+          theme === "night" 
+            ? "bg-[#001f15]/85 border-emerald-900/40 text-[#6ffbbe] shadow-2xl shadow-black/60" 
+            : "bg-white border-[#bfc9c3]/30 text-[#003527] shadow-[0_12px_40px_rgba(6,78,59,0.04)]"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b pb-4 border-emerald-500/10 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-lg">
+              📡
+            </div>
+            <div>
+              <h3 className="text-sm font-black uppercase tracking-wider">AI Biosphere Advisor & Telemetry Logs</h3>
+              <p className="text-[10px] opacity-60">Real-time educational diagnostics based on atmospheric parameters</p>
+            </div>
+          </div>
+          <span className="font-mono text-[9px] bg-emerald-500/15 text-emerald-400 px-2.5 py-1 rounded-full uppercase tracking-wider font-bold animate-pulse">
+            Chamber Online
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {getEnvironmentalLogs().map((log, i) => (
+            <div 
+              key={i}
+              className={`p-4 rounded-2xl border flex gap-3 items-start transition-all duration-300 ${
+                log.type === "warning"
+                  ? theme === "night"
+                    ? "bg-amber-950/20 border-amber-500/20 text-amber-300 animate-pulse-subtle"
+                    : "bg-amber-50 border-amber-100 text-amber-800"
+                  : log.type === "success"
+                  ? theme === "night"
+                    ? "bg-emerald-950/20 border-emerald-500/20 text-emerald-300"
+                    : "bg-emerald-50 border-emerald-100 text-emerald-800"
+                  : theme === "night"
+                  ? "bg-sky-950/20 border-sky-500/20 text-sky-300"
+                  : "bg-sky-50 border-sky-100 text-sky-800"
+              }`}
+            >
+              <span className="text-xl shrink-0 mt-0.5">{log.icon}</span>
+              <div className="space-y-1">
+                <h4 className="text-xs font-black tracking-tight">{log.title}</h4>
+                <p className="text-[10px] leading-relaxed opacity-85">{log.message}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 }

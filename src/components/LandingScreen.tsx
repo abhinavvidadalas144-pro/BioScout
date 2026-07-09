@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { ActiveScreen, UserProfile, Sighting, SpeciesData } from "../types";
 import ShaderCanvas from "./ShaderCanvas";
 import { IMAGES } from "../assets";
-import { Menu, X, Compass, BookOpen, Map, Trophy, LogOut, User } from "lucide-react";
+import { Menu, X, Compass, BookOpen, Map, Trophy, LogOut, User, Sliders } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import GlobalSearchBar from "./GlobalSearchBar";
 import ThreeDCard from "./ThreeDCard";
@@ -48,6 +48,173 @@ export default function LandingScreen({
       });
     }
   };
+
+  if (!currentUser) {
+    return (
+      <div className={`font-sans overflow-x-hidden min-h-screen transition-all duration-300 ${
+        theme === "night" ? "bg-[#000d08] text-[#6ffbbe]" : "bg-[#f5f7f6] text-[#003527]"
+      }`}>
+        {/* Animated shader backdrop */}
+        <div className="absolute inset-0 w-full h-full opacity-40 pointer-events-none">
+          <ShaderCanvas />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#000d08]/10 via-[#000d08]/50 to-[#000d08] pointer-events-none"></div>
+
+        {/* Top Navigation */}
+        <nav className={`fixed top-0 w-full z-50 backdrop-blur-xl transition-all duration-300 border-b ${
+          theme === "night"
+            ? "bg-[#001c13]/85 border-emerald-950/80 text-[#6ffbbe] shadow-[0_4px_32px_rgba(0,0,0,0.5)]"
+            : "bg-white/80 border-[#bfc9c3]/30 text-[#003527] shadow-[0_4px_32px_rgba(6,78,59,0.05)]"
+        }`}>
+          <div className="max-w-[1280px] mx-auto px-6 md:px-16 flex items-center justify-between h-20">
+            <div className={`text-2xl font-extrabold tracking-tight flex items-center gap-2 ${
+              theme === "night" ? "text-[#6ffbbe]" : "text-[#003527]"
+            }`}>
+              <Compass className="w-6 h-6 text-emerald-500 animate-spin-slow" />
+              <span>BioScout</span>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => onOpenAuth("login")}
+                className={`text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  theme === "night" ? "text-emerald-300 hover:text-emerald-100" : "text-[#404944] hover:text-[#003527]"
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => onOpenAuth("register")}
+                className="bg-gradient-to-r from-[#044c35] to-[#10b981] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:brightness-110 shadow-md active:scale-95 transition-all cursor-pointer"
+              >
+                Create Account
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Premium Authentication Landing Experience Hero */}
+        <div className="max-w-[1280px] mx-auto px-6 md:px-16 pt-32 pb-20 relative z-10 min-h-screen flex flex-col justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Column: Headline and Call-to-actions */}
+            <div className="lg:col-span-6 space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-extrabold text-[10px] uppercase tracking-widest">
+                <span className="flex h-1.5 w-1.5 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                <span>Conservation Intelligence Gateway</span>
+              </div>
+
+              <div className="space-y-4">
+                <h1 className="text-4xl md:text-5xl xl:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.08]">
+                  Welcome to <span className="bg-gradient-to-r from-emerald-500 via-[#10b981] to-teal-400 bg-clip-text text-transparent">BioScout</span>
+                </h1>
+                <p className="text-sm md:text-base text-[#4d5e54] dark:text-emerald-400/70 leading-relaxed max-w-xl font-medium">
+                  An AI-powered biodiversity conservation platform for intelligent species identification, wildlife exploration, and citizen science.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => onOpenAuth("login")}
+                  className="bg-gradient-to-r from-[#044c35] to-[#10b981] text-white px-8 py-4.5 rounded-2xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-900/10 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                >
+                  <span>Sign In</span>
+                  <span className="material-symbols-outlined text-[16px]">login</span>
+                </button>
+                <button
+                  onClick={() => onOpenAuth("register")}
+                  className="border border-emerald-500/25 bg-emerald-500/5 hover:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 px-8 py-4.5 rounded-2xl font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                >
+                  <span>Create Account</span>
+                  <span className="material-symbols-outlined text-[16px]">person_add</span>
+                </button>
+              </div>
+
+              <div className="pt-4 border-t border-slate-200/50 dark:border-emerald-950/50 flex gap-6 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-emerald-500/40">
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[14px] text-emerald-500">verified_user</span>
+                  <span>Secure Naturalist ID</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[14px] text-emerald-500">public</span>
+                  <span>Active Sighting Cache</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: High Fidelity Mockup Showcase representing premium features */}
+            <div className="lg:col-span-6 relative">
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-[32px] blur opacity-25 dark:opacity-40 animate-pulse-slow"></div>
+              <div className="relative border rounded-[32px] overflow-hidden p-6 md:p-8 transition-all duration-300 bg-white/75 border-slate-200/50 dark:bg-[#001c12]/80 dark:border-emerald-950/50 shadow-2xl space-y-6">
+                
+                {/* Visual Indicator of the AI species scanner */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-emerald-500">
+                    <span>AI Classifier Engine</span>
+                    <span className="flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                      <span>Ready</span>
+                    </span>
+                  </div>
+                  <div className="relative h-44 rounded-2xl overflow-hidden border border-slate-100 dark:border-emerald-950/30">
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Ara_macao_-Copan_Ruins%2C_Honduras_-wild-8.jpg" 
+                      className="w-full h-full object-cover brightness-95" 
+                      alt="Sample Scarlet Macaw Sighting"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute top-4 left-4 border border-emerald-400 p-2 bg-emerald-950/80 backdrop-blur text-white text-[10px] font-bold rounded-lg flex flex-col">
+                      <span className="text-[#6ffbbe]">SCARLET MACAW</span>
+                      <span className="text-[8px] text-emerald-300">98% Match Confidence</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visual Indicators of Map & Sandbox */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-2xl border border-slate-100 dark:border-emerald-950/30 bg-slate-50/50 dark:bg-[#00140c] space-y-1">
+                    <span className="text-[9px] font-extrabold uppercase text-slate-400 dark:text-emerald-500/50 tracking-wider">Coordinates Mapped</span>
+                    <p className="text-xl font-black text-slate-800 dark:text-emerald-300">4.21S 62.45W</p>
+                    <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-[12px]">location_on</span>
+                      <span>Amazon Canopy</span>
+                    </span>
+                  </div>
+                  <div className="p-4 rounded-2xl border border-slate-100 dark:border-emerald-950/30 bg-slate-50/50 dark:bg-[#00140c] space-y-1">
+                    <span className="text-[9px] font-extrabold uppercase text-slate-400 dark:text-emerald-500/50 tracking-wider">Ecosystem Sandbox</span>
+                    <p className="text-xl font-black text-slate-800 dark:text-emerald-300">Stable Biome</p>
+                    <div className="flex gap-2 text-[10px] font-bold text-slate-500 dark:text-emerald-400/70">
+                      <span>🌡️ 27°C</span>
+                      <span>💧 85% RH</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Badge showcase locked overlay */}
+                <div className="p-4 rounded-2xl border border-dashed border-slate-200 dark:border-emerald-900/40 bg-slate-50/20 dark:bg-[#00110a]/40 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-lg">
+                      🔒
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-slate-700 dark:text-emerald-300">Gamified Rank & Milestones</h4>
+                      <p className="text-[10px] text-slate-400 dark:text-emerald-500/50">Gain ranks, badges and complete weekly naturalist tasks</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`font-sans overflow-x-hidden min-h-screen transition-all duration-300 ${
       theme === "night" ? "bg-[#00100a] text-[#6ffbbe]" : "bg-[#f9f9f8] text-[#1a1c1c]"
@@ -152,6 +319,19 @@ export default function LandingScreen({
               }`}
             >
               Field Guide
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05, y: -0.5 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              onClick={() => onNavigate(ActiveScreen.SANDBOX)}
+              className={`font-bold text-xs md:text-sm px-3.5 py-1.5 rounded-lg transition-all duration-300 cursor-pointer ${
+                theme === "night" 
+                  ? "text-emerald-500/60 hover:text-emerald-300 hover:bg-emerald-950/20" 
+                  : "text-[#404944] hover:text-[#003527] hover:bg-[#003527]/5"
+              }`}
+            >
+              Sandbox
             </motion.button>
           </div>
           
@@ -328,6 +508,13 @@ export default function LandingScreen({
                   >
                     <BookOpen className="w-4.5 h-4.5 text-emerald-700" />
                     <span>Field Guide</span>
+                  </button>
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); onNavigate(ActiveScreen.SANDBOX); }}
+                    className="flex items-center gap-3.5 text-left font-extrabold text-sm text-[#404944] hover:text-[#003527] py-2 transition-colors cursor-pointer"
+                  >
+                    <Sliders className="w-4.5 h-4.5 text-emerald-700" />
+                    <span>Ecosystem Sandbox</span>
                   </button>
                 </div>
               </div>

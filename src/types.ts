@@ -14,7 +14,8 @@ export enum ActiveScreen {
   HQ = "hq",
   GUIDE = "guide",
   LOGIN = "login",
-  REGISTER = "register"
+  REGISTER = "register",
+  SANDBOX = "sandbox"
 }
 
 export interface SimilarSpecies {

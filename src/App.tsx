@@ -4,6 +4,7 @@ import LandingScreen from "./components/LandingScreen";
 import MapScreen from "./components/MapScreen";
 import HqDashboard from "./components/HqDashboard";
 import FieldGuideScreen from "./components/FieldGuideScreen";
+import EcosystemSandbox from "./components/EcosystemSandbox";
 import ReportSightingModal from "./components/ReportSightingModal";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
@@ -188,17 +189,7 @@ export default function App() {
         console.error(e);
       }
     } else {
-      const defaultUser: UserProfile = {
-        username: "Caleb Vance",
-        email: "caleb@bioscout.org",
-        points: 350,
-        streak: 5,
-        avatar: "🦊",
-        rank: "SENTINEL",
-        registeredAt: "6/30/2026"
-      };
-      setCurrentUser(defaultUser);
-      localStorage.setItem("bioscout_current_user", JSON.stringify(defaultUser));
+      setCurrentUser(null);
     }
   }, []);
 
@@ -206,18 +197,43 @@ export default function App() {
   useEffect(() => {
     const handleLocationChange = () => {
       const path = window.location.pathname;
-      if (path === "/login") {
-        setActiveScreen(ActiveScreen.LOGIN);
-      } else if (path === "/register") {
-        setActiveScreen(ActiveScreen.REGISTER);
-      } else if (path === "/map") {
-        setActiveScreen(ActiveScreen.MAP);
-      } else if (path === "/hq") {
-        setActiveScreen(ActiveScreen.HQ);
-      } else if (path === "/guide") {
-        setActiveScreen(ActiveScreen.GUIDE);
+      const cachedCurrentUser = localStorage.getItem("bioscout_current_user");
+
+      if (!cachedCurrentUser && !currentUser) {
+        // Unauthenticated users can only access LANDING, LOGIN, or REGISTER
+        if (path === "/register") {
+          setActiveScreen(ActiveScreen.REGISTER);
+        } else if (path === "/login") {
+          setActiveScreen(ActiveScreen.LOGIN);
+        } else {
+          // Any other route forces login or landing gate
+          if (path === "/map" || path === "/hq" || path === "/guide" || path === "/sandbox") {
+            setActiveScreen(ActiveScreen.LOGIN);
+            if (window.location.pathname !== "/login") {
+              window.history.pushState({}, "", "/login");
+            }
+          } else {
+            setActiveScreen(ActiveScreen.LANDING);
+          }
+        }
       } else {
-        setActiveScreen(ActiveScreen.LANDING);
+        // Authenticated users
+        if (path === "/login" || path === "/register") {
+          setActiveScreen(ActiveScreen.HQ);
+          if (window.location.pathname !== "/hq") {
+            window.history.pushState({}, "", "/hq");
+          }
+        } else if (path === "/map") {
+          setActiveScreen(ActiveScreen.MAP);
+        } else if (path === "/hq") {
+          setActiveScreen(ActiveScreen.HQ);
+        } else if (path === "/guide") {
+          setActiveScreen(ActiveScreen.GUIDE);
+        } else if (path === "/sandbox") {
+          setActiveScreen(ActiveScreen.SANDBOX);
+        } else {
+          setActiveScreen(ActiveScreen.LANDING);
+        }
       }
     };
 
@@ -227,7 +243,7 @@ export default function App() {
     return () => {
       window.removeEventListener("popstate", handleLocationChange);
     };
-  }, []);
+  }, [currentUser]);
 
   const handleAuthSuccess = (user: UserProfile) => {
     setCurrentUser(user);
@@ -260,6 +276,7 @@ export default function App() {
     localStorage.removeItem("bioscout_current_user");
     setTotalPoints(50);
     setStreakCount(1);
+    navigateToScreen(ActiveScreen.LOGIN);
   };
 
   const handleSightingConfirmed = (newSighting: Sighting, speciesData: SpeciesData) => {
@@ -398,18 +415,26 @@ export default function App() {
   };
 
   const navigateToScreen = (screen: ActiveScreen) => {
-    setActiveScreen(screen);
-    if (screen !== ActiveScreen.MAP) {
+    // If not authenticated, restrict access to only LANDING, LOGIN, and REGISTER
+    const isAuth = !!localStorage.getItem("bioscout_current_user") || !!currentUser;
+    let targetScreen = screen;
+    if (!isAuth && screen !== ActiveScreen.LOGIN && screen !== ActiveScreen.REGISTER && screen !== ActiveScreen.LANDING) {
+      targetScreen = ActiveScreen.LOGIN;
+    }
+
+    setActiveScreen(targetScreen);
+    if (targetScreen !== ActiveScreen.MAP) {
       setFocusedSightingId(undefined);
     }
 
     // Synchronize browser URL pathname
     let path = "/";
-    if (screen === ActiveScreen.MAP) path = "/map";
-    else if (screen === ActiveScreen.HQ) path = "/hq";
-    else if (screen === ActiveScreen.GUIDE) path = "/guide";
-    else if (screen === ActiveScreen.LOGIN) path = "/login";
-    else if (screen === ActiveScreen.REGISTER) path = "/register";
+    if (targetScreen === ActiveScreen.MAP) path = "/map";
+    else if (targetScreen === ActiveScreen.HQ) path = "/hq";
+    else if (targetScreen === ActiveScreen.GUIDE) path = "/guide";
+    else if (targetScreen === ActiveScreen.SANDBOX) path = "/sandbox";
+    else if (targetScreen === ActiveScreen.LOGIN) path = "/login";
+    else if (targetScreen === ActiveScreen.REGISTER) path = "/register";
 
     if (window.location.pathname !== path) {
       window.history.pushState({}, "", path);
@@ -531,6 +556,19 @@ export default function App() {
                   }`}
                 >
                   Field Guide
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05, y: -0.5 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  onClick={() => navigateToScreen(ActiveScreen.SANDBOX)}
+                  className={`font-bold text-xs md:text-sm px-3.5 py-1.5 rounded-lg transition-all duration-300 cursor-pointer ${
+                    activeScreen === ActiveScreen.SANDBOX 
+                      ? theme === "night" ? "text-emerald-400 bg-emerald-950/30 border-b-2 border-emerald-400" : "text-[#003527] bg-[#003527]/5 border-b-2 border-[#003527]" 
+                      : theme === "night" ? "text-emerald-500/60 hover:text-emerald-300 hover:bg-emerald-950/20" : "text-[#404944] hover:text-[#003527] hover:bg-[#003527]/5"
+                  }`}
+                >
+                  Sandbox
                 </motion.button>
               </div>
 
@@ -725,6 +763,19 @@ export default function App() {
               onAddCustomGuide={handleAddCustomGuide}
               theme={theme}
             />
+          </motion.div>
+        )}
+
+        {activeScreen === ActiveScreen.SANDBOX && (
+          <motion.div
+            key="sandbox"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="pt-24 pb-12 max-w-[1280px] mx-auto px-6 md:px-16"
+          >
+            <EcosystemSandbox theme={theme} />
           </motion.div>
         )}
 
