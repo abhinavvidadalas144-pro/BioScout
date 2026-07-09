@@ -4,8 +4,9 @@ import GlobalSearchBar from "./components/GlobalSearchBar";
 import { IMAGES } from "./assets";
 import { motion, AnimatePresence } from "motion/react";
 
+import LandingScreen from "./components/LandingScreen";
+
 // Lazy load screen modules to optimize bundle size and split initial chunk payloads
-const LandingScreen = lazy(() => import("./components/LandingScreen"));
 const MapScreen = lazy(() => import("./components/MapScreen"));
 const HqDashboard = lazy(() => import("./components/HqDashboard"));
 const FieldGuideScreen = lazy(() => import("./components/FieldGuideScreen"));
