@@ -73,6 +73,50 @@ const BIOME_SPECIES: BiomeSpecies[] = [
   }
 ];
 
+interface ClimatePreset {
+  name: string;
+  icon: string;
+  humidity: number;
+  altitude: number;
+  canopy: number;
+  description: string;
+}
+
+const CLIMATE_PRESETS: ClimatePreset[] = [
+  {
+    name: "Amazon Basin",
+    icon: "🌧️",
+    humidity: 90,
+    altitude: 10,
+    canopy: 85,
+    description: "Saturated rain forest canopy with low elevation."
+  },
+  {
+    name: "Andean Peak",
+    icon: "🏔️",
+    humidity: 20,
+    altitude: 85,
+    canopy: 5,
+    description: "Arid, thin-oxygen highland cliffs."
+  },
+  {
+    name: "Mojave Dunes",
+    icon: "🌵",
+    humidity: 8,
+    altitude: 25,
+    canopy: 0,
+    description: "Ultra-dry, scorched open flatlands."
+  },
+  {
+    name: "Sunderbans Delta",
+    icon: "🐅",
+    humidity: 65,
+    altitude: 15,
+    canopy: 60,
+    description: "Moderate humidity, dense delta-basin jungle."
+  }
+];
+
 interface EcosystemSandboxProps {
   theme: "light" | "night";
 }
@@ -84,6 +128,17 @@ export default function EcosystemSandbox({ theme }: EcosystemSandboxProps) {
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [scanProgress, setScanProgress] = useState<number>(0);
   const [activeSpeciesDetail, setActiveSpeciesDetail] = useState<BiomeSpecies | null>(null);
+
+  const applyPreset = (preset: ClimatePreset) => {
+    if (isScanning) return;
+    setHumidity(preset.humidity);
+    setAltitude(preset.altitude);
+    setCanopy(preset.canopy);
+    
+    // Auto-trigger bioscan
+    setIsScanning(true);
+    setScanProgress(0);
+  };
 
   // Trigger Biosphere Scan effect
   const handleInitiateScan = () => {
@@ -274,6 +329,41 @@ export default function EcosystemSandbox({ theme }: EcosystemSandboxProps) {
             <div className="flex items-center gap-2 border-b pb-4 border-emerald-500/10">
               <Sliders className="w-5 h-5 text-emerald-500" />
               <span className="font-extrabold text-sm uppercase tracking-wider">Atmospheric Controls</span>
+            </div>
+
+            {/* Climate Corridor Quick Presets */}
+            <div className="space-y-2 pb-2">
+              <span className="block text-[9px] font-extrabold uppercase tracking-widest text-[#404944]/80 font-mono">
+                Rapid Climate Presets
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {CLIMATE_PRESETS.map((preset) => {
+                  const isActive = humidity === preset.humidity && altitude === preset.altitude && canopy === preset.canopy;
+                  return (
+                    <button
+                      key={preset.name}
+                      type="button"
+                      onClick={() => applyPreset(preset)}
+                      disabled={isScanning}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        isActive
+                          ? "bg-emerald-600 border-transparent text-white shadow-md shadow-emerald-500/10"
+                          : theme === "night"
+                          ? "bg-[#002419] border-emerald-950 text-[#6ffbbe] hover:bg-[#003527]/30"
+                          : "bg-slate-50/80 border-slate-200/65 text-[#003527] hover:bg-slate-100"
+                      } ${isScanning ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      <div className="flex items-center gap-1 font-extrabold text-[10px]">
+                        <span className="shrink-0">{preset.icon}</span>
+                        <span className="truncate">{preset.name}</span>
+                      </div>
+                      <p className={`text-[8px] mt-0.5 leading-tight line-clamp-1 opacity-70`}>
+                        {preset.description}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Humidity Slider */}
