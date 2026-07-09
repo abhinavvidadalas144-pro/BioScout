@@ -100,31 +100,40 @@ export default function ShaderCanvas() {
     const uResolution = gl.getUniformLocation(program, "u_resolution");
     const uMouse = gl.getUniformLocation(program, "u_mouse");
 
-    let mouseX = canvas.width / 2;
-    let mouseY = canvas.height / 2;
+    let canvasWidth = canvas.clientWidth || window.innerWidth;
+    let canvasHeight = canvas.clientHeight || window.innerHeight;
+
+    let mouseX = canvasWidth / 2;
+    let mouseY = canvasHeight / 2;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = rect.height - (e.clientY - rect.top);
+      mouseX = e.clientX;
+      mouseY = canvasHeight - e.clientY;
     };
 
+    const handleResize = () => {
+      if (!canvas) return;
+      const w = canvas.clientWidth || window.innerWidth;
+      const h = canvas.clientHeight || window.innerHeight;
+      canvasWidth = w;
+      canvasHeight = h;
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    };
+
+    // Initialize dimensions
+    handleResize();
+
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("resize", handleResize);
 
     let animationId: number;
     const render = (time: number) => {
       if (!canvasRef.current) return;
-      
-      const width = canvas.clientWidth || 800;
-      const height = canvas.clientHeight || 600;
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-        gl.viewport(0, 0, width, height);
-      }
 
       gl.uniform1f(uTime, time * 0.001);
-      gl.uniform2f(uResolution, canvas.width, canvas.height);
+      gl.uniform2f(uResolution, canvasWidth, canvasHeight);
       gl.uniform2f(uMouse, mouseX, mouseY);
 
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -135,6 +144,7 @@ export default function ShaderCanvas() {
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationId);
     };
   }, []);

@@ -613,11 +613,15 @@ export default function LandingScreen({
           </div>
 
           <ThreeDCard className="w-full" depth={10} scale={1.02}>
-            <div className="relative p-4 bg-white/65 backdrop-blur-[20px] rounded-[24px] shadow-[0_4px_32px_0_rgba(6,78,59,0.08)] group h-full w-full [transform-style:preserve-3d]">
+            <div className="relative p-4 bg-white/65 backdrop-blur-[20px] rounded-[24px] shadow-[0_4px_32px_0_rgba(6,78,59,0.08)] group h-full w-full aspect-square [transform-style:preserve-3d]">
               <img
                 alt="BioScout Community"
-                className="w-full h-auto rounded-[24px]"
+                className="w-full h-full aspect-square object-cover rounded-[24px]"
                 src={IMAGES.seniorNaturalist}
+                width={512}
+                height={512}
+                fetchPriority="high"
+                loading="eager"
               />
               <div 
                 className="absolute -bottom-6 -left-6 bg-white/65 backdrop-blur-[20px] p-6 rounded-[24px] shadow-[0_4px_32px_0_rgba(6,78,59,0.08)] max-w-[240px] animate-bounce-subtle z-30"
@@ -766,11 +770,15 @@ export default function LandingScreen({
               }}
               className="bg-white/65 backdrop-blur-[20px] rounded-[24px] overflow-hidden shadow-[0_4px_32px_0_rgba(6,78,59,0.08)] border border-emerald-500/5 group cursor-pointer h-full [transform-style:preserve-3d]"
             >
-              <div className="h-64 relative overflow-hidden [transform-style:preserve-3d]">
+              <div className="h-64 relative overflow-hidden [transform-style:preserve-3d] aspect-[3/2]">
                 <img
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 aspect-[3/2]"
                   src={IMAGES.blueMorphoButterfly}
                   alt="Blue Morpho"
+                  width={480}
+                  height={320}
+                  loading="lazy"
+                  fetchPriority="low"
                 />
                 <div 
                   className="absolute top-4 right-4 bg-[#003527]/80 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider"
@@ -803,11 +811,15 @@ export default function LandingScreen({
               }}
               className="bg-white/65 backdrop-blur-[20px] rounded-[24px] overflow-hidden shadow-[0_4px_32px_0_rgba(6,78,59,0.08)] border border-emerald-500/5 group cursor-pointer h-full [transform-style:preserve-3d]"
             >
-              <div className="h-64 relative overflow-hidden [transform-style:preserve-3d]">
+              <div className="h-64 relative overflow-hidden [transform-style:preserve-3d] aspect-[3/2]">
                 <img
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 aspect-[3/2]"
                   src={IMAGES.snowLeopard}
                   alt="Snow Leopard"
+                  width={480}
+                  height={320}
+                  loading="lazy"
+                  fetchPriority="low"
                 />
                 <div 
                   className="absolute top-4 right-4 bg-red-600/80 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider"
@@ -840,11 +852,15 @@ export default function LandingScreen({
               }}
               className="bg-white/65 backdrop-blur-[20px] rounded-[24px] overflow-hidden shadow-[0_4px_32px_0_rgba(6,78,59,0.08)] border border-emerald-500/5 group cursor-pointer h-full [transform-style:preserve-3d]"
             >
-              <div className="h-64 relative overflow-hidden [transform-style:preserve-3d]">
+              <div className="h-64 relative overflow-hidden [transform-style:preserve-3d] aspect-[3/2]">
                 <img
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 aspect-[3/2]"
                   src={IMAGES.giantTreeFern}
                   alt="Giant Tree Fern"
+                  width={480}
+                  height={320}
+                  loading="lazy"
+                  fetchPriority="low"
                 />
                 <div 
                   className="absolute top-4 right-4 bg-emerald-600/80 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider"
@@ -966,9 +982,13 @@ export default function LandingScreen({
             </blockquote>
             <div className="flex items-center justify-center gap-4 pt-4">
               <img
-                className="w-16 h-16 rounded-full border-2 border-[#6ffbbe] object-cover"
+                className="w-16 h-16 rounded-full border-2 border-[#6ffbbe] object-cover aspect-square"
                 src={IMAGES.elenaVos}
                 alt="Dr. Elena Vos"
+                width={64}
+                height={64}
+                loading="lazy"
+                fetchPriority="low"
               />
               <div className="text-left">
                 <div className="text-lg font-bold">Dr. Elena Vos</div>

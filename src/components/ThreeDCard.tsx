@@ -16,12 +16,17 @@ export default function ThreeDCard({
   glareOpacity = 0.2
 }: ThreeDCardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<DOMRect | null>(null);
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
+    let rect = rectRef.current;
+    if (!rect) {
+      if (!containerRef.current) return;
+      rect = containerRef.current.getBoundingClientRect();
+      rectRef.current = rect;
+    }
     
     // Calculate normalized mouse positions (-1 to 1) relative to center of card
     const width = rect.width;
@@ -37,11 +42,15 @@ export default function ThreeDCard({
 
   const handleMouseEnter = () => {
     setIsHovered(true);
+    if (containerRef.current) {
+      rectRef.current = containerRef.current.getBoundingClientRect();
+    }
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
     setCoords({ x: 0, y: 0 });
+    rectRef.current = null;
   };
 
   // Convert coords into rotation degrees
