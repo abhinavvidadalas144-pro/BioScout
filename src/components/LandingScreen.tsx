@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, lazy, Suspense } from "react";
 import { ActiveScreen, UserProfile, Sighting, SpeciesData } from "../types";
 import ShaderCanvas from "./ShaderCanvas";
 import { IMAGES } from "../assets";
@@ -6,7 +6,8 @@ import { Menu, X, Compass, BookOpen, Map, Trophy, LogOut, User, Sliders } from "
 import { motion, AnimatePresence } from "motion/react";
 import GlobalSearchBar from "./GlobalSearchBar";
 import ThreeDCard from "./ThreeDCard";
-import EcosystemSandbox from "./EcosystemSandbox";
+
+const EcosystemSandbox = lazy(() => import("./EcosystemSandbox"));
 
 interface LandingScreenProps {
   onNavigate: (screen: ActiveScreen) => void;
@@ -663,7 +664,14 @@ export default function LandingScreen({
       {/* Ecosystem Sandbox Simulator Section */}
       <section className="py-24 bg-gradient-to-b from-[#f4f4f3] via-[#fafafa] to-white border-t border-b border-emerald-500/10 relative overflow-hidden">
         <div className="max-w-[1280px] mx-auto px-6 md:px-16 relative z-10">
-          <EcosystemSandbox theme={theme} />
+          <Suspense fallback={
+            <div className="flex flex-col items-center justify-center p-12 text-[#003527] min-h-[300px]">
+              <div className="w-8 h-8 rounded-full border-2 border-emerald-500/20 border-t-emerald-600 animate-spin" />
+              <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-[#003527]/70 animate-pulse">Initializing Simulator Environment...</p>
+            </div>
+          }>
+            <EcosystemSandbox theme={theme} />
+          </Suspense>
         </div>
       </section>
 

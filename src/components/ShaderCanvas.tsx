@@ -100,8 +100,9 @@ export default function ShaderCanvas() {
     const uResolution = gl.getUniformLocation(program, "u_resolution");
     const uMouse = gl.getUniformLocation(program, "u_mouse");
 
-    let canvasWidth = canvas.clientWidth || window.innerWidth;
-    let canvasHeight = canvas.clientHeight || window.innerHeight;
+    // Initialize size using window viewport dimensions as a safe, layout-calculation-free estimate
+    let canvasWidth = window.innerWidth;
+    let canvasHeight = window.innerHeight;
 
     let mouseX = canvasWidth / 2;
     let mouseY = canvasHeight / 2;
@@ -111,22 +112,23 @@ export default function ShaderCanvas() {
       mouseY = canvasHeight - e.clientY;
     };
 
-    const handleResize = () => {
-      if (!canvas) return;
-      const w = canvas.clientWidth || window.innerWidth;
-      const h = canvas.clientHeight || window.innerHeight;
-      canvasWidth = w;
-      canvasHeight = h;
-      canvas.width = w;
-      canvas.height = h;
-      gl.viewport(0, 0, w, h);
-    };
+    // Use ResizeObserver for asynchronous, non-blocking size updates that never trigger forced reflows
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // Use entry.contentRect which is pre-calculated by the layout engine
+        const w = Math.round(entry.contentRect.width) || window.innerWidth;
+        const h = Math.round(entry.contentRect.height) || window.innerHeight;
+        canvasWidth = w;
+        canvasHeight = h;
+        canvas.width = w;
+        canvas.height = h;
+        gl.viewport(0, 0, w, h);
+      }
+    });
 
-    // Initialize dimensions
-    handleResize();
+    resizeObserver.observe(canvas);
 
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("resize", handleResize);
 
     let animationId: number;
     const render = (time: number) => {
@@ -144,7 +146,7 @@ export default function ShaderCanvas() {
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", handleResize);
+      resizeObserver.disconnect();
       cancelAnimationFrame(animationId);
     };
   }, []);
