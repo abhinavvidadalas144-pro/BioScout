@@ -1,16 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { ActiveScreen, Sighting, SpeciesData, UserProfile } from "./types";
-import LandingScreen from "./components/LandingScreen";
-import MapScreen from "./components/MapScreen";
-import HqDashboard from "./components/HqDashboard";
-import FieldGuideScreen from "./components/FieldGuideScreen";
-import EcosystemSandbox from "./components/EcosystemSandbox";
-import ReportSightingModal from "./components/ReportSightingModal";
-import LoginPage from "./components/LoginPage";
-import RegisterPage from "./components/RegisterPage";
 import GlobalSearchBar from "./components/GlobalSearchBar";
 import { IMAGES } from "./assets";
 import { motion, AnimatePresence } from "motion/react";
+
+// Lazy load screen modules to optimize bundle size and split initial chunk payloads
+const LandingScreen = lazy(() => import("./components/LandingScreen"));
+const MapScreen = lazy(() => import("./components/MapScreen"));
+const HqDashboard = lazy(() => import("./components/HqDashboard"));
+const FieldGuideScreen = lazy(() => import("./components/FieldGuideScreen"));
+const EcosystemSandbox = lazy(() => import("./components/EcosystemSandbox"));
+const ReportSightingModal = lazy(() => import("./components/ReportSightingModal"));
+const LoginPage = lazy(() => import("./components/LoginPage"));
+const RegisterPage = lazy(() => import("./components/RegisterPage"));
+
+// Ambient loading skeleton designed to blend seamlessly with the conservation terminal UI
+const ScreenLoader = () => (
+  <div className="min-h-screen flex flex-col items-center justify-center bg-[#031510] text-white p-6">
+    <div className="relative flex items-center justify-center">
+      <div className="w-12 h-12 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
+    </div>
+    <p className="mt-4 font-sans text-xs font-semibold text-emerald-400/80 tracking-widest uppercase animate-pulse">Loading Environment...</p>
+  </div>
+);
 
 export default function App() {
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>(ActiveScreen.LANDING);
@@ -673,154 +685,158 @@ export default function App() {
       </AnimatePresence>
 
       {/* Screen Render Switch with smooth transition wrapper */}
-      <AnimatePresence mode="wait">
-        {activeScreen === ActiveScreen.LANDING && (
-          <motion.div
-            key="landing"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <LandingScreen
-              onNavigate={navigateToScreen}
-              onReportSighting={() => setIsReportModalOpen(true)}
-              currentUser={currentUser}
-              onLogout={handleLogout}
-              onOpenAuth={(tab) => navigateToScreen(tab === "login" ? ActiveScreen.LOGIN : ActiveScreen.REGISTER)}
-              onSelectSpecies={handleSelectSpeciesFromMap}
-              theme={theme}
-              onToggleTheme={handleToggleTheme}
-              sightings={sightings}
-              customGuides={customGuides}
-              onSelectSighting={(id) => {
-                setFocusedSightingId(id);
-                navigateToScreen(ActiveScreen.MAP);
-              }}
-            />
-          </motion.div>
-        )}
+      <Suspense fallback={<ScreenLoader />}>
+        <AnimatePresence mode="wait">
+          {activeScreen === ActiveScreen.LANDING && (
+            <motion.div
+              key="landing"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <LandingScreen
+                onNavigate={navigateToScreen}
+                onReportSighting={() => setIsReportModalOpen(true)}
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                onOpenAuth={(tab) => navigateToScreen(tab === "login" ? ActiveScreen.LOGIN : ActiveScreen.REGISTER)}
+                onSelectSpecies={handleSelectSpeciesFromMap}
+                theme={theme}
+                onToggleTheme={handleToggleTheme}
+                sightings={sightings}
+                customGuides={customGuides}
+                onSelectSighting={(id) => {
+                  setFocusedSightingId(id);
+                  navigateToScreen(ActiveScreen.MAP);
+                }}
+              />
+            </motion.div>
+          )}
 
-        {activeScreen === ActiveScreen.MAP && (
-          <motion.div
-            key="map"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <MapScreen
-              sightings={sightings}
-              onNavigate={navigateToScreen}
-              onSelectSpecies={handleSelectSpeciesFromMap}
-              onReportSighting={() => setIsReportModalOpen(true)}
-              onAddSightingDirectly={handleAddSightingDirectly}
-              onUpdateSighting={handleUpdateSighting}
-              theme={theme}
-              isFullscreen={mapFullscreen}
-              onToggleFullscreen={setMapFullscreen}
-              initialSelectedSightingId={focusedSightingId}
-            />
-          </motion.div>
-        )}
+          {activeScreen === ActiveScreen.MAP && (
+            <motion.div
+              key="map"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <MapScreen
+                sightings={sightings}
+                onNavigate={navigateToScreen}
+                onSelectSpecies={handleSelectSpeciesFromMap}
+                onReportSighting={() => setIsReportModalOpen(true)}
+                onAddSightingDirectly={handleAddSightingDirectly}
+                onUpdateSighting={handleUpdateSighting}
+                theme={theme}
+                isFullscreen={mapFullscreen}
+                onToggleFullscreen={setMapFullscreen}
+                initialSelectedSightingId={focusedSightingId}
+              />
+            </motion.div>
+          )}
 
-        {activeScreen === ActiveScreen.HQ && (
-          <motion.div
-            key="hq"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <HqDashboard
-              onNavigate={navigateToScreen}
-              onReportSighting={() => setIsReportModalOpen(true)}
-              streakCount={streakCount}
-              totalPoints={totalPoints}
-              currentUser={currentUser}
-              onOpenAuth={(tab) => navigateToScreen(tab === "login" ? ActiveScreen.LOGIN : ActiveScreen.REGISTER)}
-              onUpdateUser={handleUpdateUser}
-              sightings={sightings}
-              customGuides={customGuides}
-              theme={theme}
-            />
-          </motion.div>
-        )}
+          {activeScreen === ActiveScreen.HQ && (
+            <motion.div
+              key="hq"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <HqDashboard
+                onNavigate={navigateToScreen}
+                onReportSighting={() => setIsReportModalOpen(true)}
+                streakCount={streakCount}
+                totalPoints={totalPoints}
+                currentUser={currentUser}
+                onOpenAuth={(tab) => navigateToScreen(tab === "login" ? ActiveScreen.LOGIN : ActiveScreen.REGISTER)}
+                onUpdateUser={handleUpdateUser}
+                sightings={sightings}
+                customGuides={customGuides}
+                theme={theme}
+              />
+            </motion.div>
+          )}
 
-        {activeScreen === ActiveScreen.GUIDE && (
-          <motion.div
-            key="guide"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <FieldGuideScreen
-              onNavigate={navigateToScreen}
-              selectedSpeciesName={selectedSpeciesName}
-              onReportSighting={() => setIsReportModalOpen(true)}
-              customGuides={customGuides}
-              onAddCustomGuide={handleAddCustomGuide}
-              theme={theme}
-            />
-          </motion.div>
-        )}
+          {activeScreen === ActiveScreen.GUIDE && (
+            <motion.div
+              key="guide"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <FieldGuideScreen
+                onNavigate={navigateToScreen}
+                selectedSpeciesName={selectedSpeciesName}
+                onReportSighting={() => setIsReportModalOpen(true)}
+                customGuides={customGuides}
+                onAddCustomGuide={handleAddCustomGuide}
+                theme={theme}
+              />
+            </motion.div>
+          )}
 
-        {activeScreen === ActiveScreen.SANDBOX && (
-          <motion.div
-            key="sandbox"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="pt-24 pb-12 max-w-[1280px] mx-auto px-6 md:px-16"
-          >
-            <EcosystemSandbox theme={theme} />
-          </motion.div>
-        )}
+          {activeScreen === ActiveScreen.SANDBOX && (
+            <motion.div
+              key="sandbox"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="pt-24 pb-12 max-w-[1280px] mx-auto px-6 md:px-16"
+            >
+              <EcosystemSandbox theme={theme} />
+            </motion.div>
+          )}
 
-        {activeScreen === ActiveScreen.LOGIN && (
-          <motion.div
-            key="login"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
-          >
-            <LoginPage
-              onNavigate={navigateToScreen}
-              onAuthSuccess={handleAuthSuccess}
-              theme={theme}
-            />
-          </motion.div>
-        )}
+          {activeScreen === ActiveScreen.LOGIN && (
+            <motion.div
+              key="login"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35 }}
+            >
+              <LoginPage
+                onNavigate={navigateToScreen}
+                onAuthSuccess={handleAuthSuccess}
+                theme={theme}
+              />
+            </motion.div>
+          )}
 
-        {activeScreen === ActiveScreen.REGISTER && (
-          <motion.div
-            key="register"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
-          >
-            <RegisterPage
-              onNavigate={navigateToScreen}
-              onAuthSuccess={handleAuthSuccess}
-              theme={theme}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          {activeScreen === ActiveScreen.REGISTER && (
+            <motion.div
+              key="register"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35 }}
+            >
+              <RegisterPage
+                onNavigate={navigateToScreen}
+                onAuthSuccess={handleAuthSuccess}
+                theme={theme}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Suspense>
 
       {/* Sighting Multi-Step Overlay Modal */}
-      <AnimatePresence>
-        {isReportModalOpen && (
-          <ReportSightingModal
-            onClose={() => setIsReportModalOpen(false)}
-            onSightingConfirmed={handleSightingConfirmed}
-          />
-        )}
-      </AnimatePresence>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {isReportModalOpen && (
+            <ReportSightingModal
+              onClose={() => setIsReportModalOpen(false)}
+              onSightingConfirmed={handleSightingConfirmed}
+            />
+          )}
+        </AnimatePresence>
+      </Suspense>
     </main>
   );
 }

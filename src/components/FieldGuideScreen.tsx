@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ActiveScreen, SpeciesData } from "../types";
 import { IMAGES } from "../assets";
 import { motion, AnimatePresence } from "motion/react";
@@ -604,10 +604,19 @@ interface SpecimenCard3DProps {
 export function SpecimenCard3D({ species, isActive, onClick }: SpecimenCard3DProps) {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const rectRef = useRef<DOMRect | null>(null);
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsHovered(true);
+    rectRef.current = e.currentTarget.getBoundingClientRect();
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = e.currentTarget;
-    const rect = el.getBoundingClientRect();
+    let rect = rectRef.current;
+    if (!rect) {
+      rect = e.currentTarget.getBoundingClientRect();
+      rectRef.current = rect;
+    }
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
@@ -623,6 +632,7 @@ export function SpecimenCard3D({ species, isActive, onClick }: SpecimenCard3DPro
   const handleMouseLeave = () => {
     setIsHovered(false);
     setTilt({ x: 0, y: 0 });
+    rectRef.current = null;
   };
 
   const getRarityColor = (name: string) => {
@@ -639,7 +649,7 @@ export function SpecimenCard3D({ species, isActive, onClick }: SpecimenCard3DPro
     <motion.div
       onClick={onClick}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
         perspective: 1000,
