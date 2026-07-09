@@ -65,9 +65,6 @@ export const IMAGES = {
 };
 
 export function getProxiedImageUrl(url: string): string {
-  if (url && (url.includes("wikimedia.org") || url.includes("upload.wikimedia.org"))) {
-    return `/api/image-proxy?url=${encodeURIComponent(url)}`;
-  }
   return url;
 }
 
